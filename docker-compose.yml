@@ -1,0 +1,24 @@
+services:
+  hailo-proxy:
+    build:
+      context: .
+      args:
+        HAILO_URL: http://host.docker.internal:8000
+        PORT: 8001
+    container_name: hailo-proxy
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - your_network_name
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8001/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+networks:
+  your_network_name:
+    external: true
